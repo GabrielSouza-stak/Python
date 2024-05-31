@@ -1,0 +1,143 @@
+import random
+
+import pyfiglet
+
+texto = pyfiglet.figlet_format(text= "\nJOGO \nDA \nFORCA" ,
+font = "speed")
+
+palavras = {
+    "animal": ["gato", "cachorro", "elefante", "girafa", "macaco", "panda", "tigre", "zebra", "leao", "jegue"],
+    "fruta": ["abacaxi", "banana", "cereja", "laranja", "maça", "manga", "melancia", "uva", "pitaya", "mamao"],
+    "país": ["alemanha", "brasil", "canada", "china", "espanha", "frança", "japao", "portugal", "turquia","croacia"],
+    "profissão": ["engenheiro", "garçon", "veterinario", "policial", "mecanico", "motorista", "contador", "pedreiro", "ginecologista", "advogado"],
+    "objeto": ["garfo", "caneta", "impressora", "computador", "celular", "relogio", "calculadora", "caixa", "garrafa", "lixeira"]
+}
+
+def desenhar_forca(erros):
+    estagios = [ """
+
+ ---------
+ |       |
+ |       
+ |       
+ |       
+ |       
+ -
+ """,
+ """
+ ---------
+ |       |
+ |       O
+ |       
+ |       
+ |       
+ 
+ """,
+ """
+ ---------
+ |       |
+ |       O
+ |       |
+ |       |
+ |       
+ -
+ """,
+ """
+ ---------
+ |       |
+ |       O
+ |      \\|
+ |       |
+ |       
+ -
+ """,
+ """
+ ---------
+ |       |
+ |       O
+ |      \\|/
+ |       |
+ |
+ -
+ """,
+ """
+ ---------
+ |       |
+ |       O
+ |      \\|/
+ |       |
+ |      / 
+ -
+ """,
+ """
+ ---------
+ |       |
+ |       O
+ |      \\|/
+ |       |
+ |      / \\
+ -
+ """,          
+    ]
+    return estagios[erros]                
+
+def verificar_palpite(palpite, palavra, palavra_oculta, erros):
+    if len(palpite) != 1 or not palpite.isalpha():
+        print("Palpite inválido. Digite apenas uma letra.")
+        return palavra_oculta, erros
+    if palpite in palavra:
+        print("Você acertou uma letra!")
+        nova_palavra_oculta = ""
+        for i in range(len(palavra)):
+            if palavra[i] == palpite:
+                nova_palavra_oculta += palpite
+            else:
+                nova_palavra_oculta += palavra_oculta[i]
+        return nova_palavra_oculta, erros
+    else:
+        print("Você errou uma letra.")
+        print(desenhar_forca(erros))
+        erros += 1
+        return palavra_oculta, erros
+
+categoria = random.choice(list(palavras.keys()))
+palavra = random.choice(palavras[categoria])
+
+palavra_oculta = "_" * len(palavra)
+erros = 0
+letras_usadas = []
+
+print(texto)
+
+print("Bem-vindo ao jogo da forca!")
+print("Você tem 6 tentativas para adivinhar a palavra. A cada tentativa errada, uma parte do corpo do boneco é desenhada na forca.")
+
+while True:
+
+    print(desenhar_forca(erros))
+    print(f"{palavra_oculta}")
+    print("\n")
+    print(f"Tema: {categoria.upper()}.")
+    print(f"Você tem {6 - erros} tentativa(s) restante(s).")
+    print(f"Você já usou as letras: {"".join(letras_usadas)}")
+
+    palpite = input("Digite uma letra: ").lower()
+
+    if palpite.isalpha():
+        if palpite in letras_usadas:
+            print("Você já usou essa letra.")
+            continue
+        else:
+            letras_usadas.append(palpite)
+
+    palavra_oculta, erros = verificar_palpite(palpite, palavra, palavra_oculta, erros)
+
+    if palavra_oculta == palavra:
+        print("\n")
+        print(f"Boa Calabreso, você ganhou o jogo! A palavra era {palavra.upper()}.")
+        break
+        
+    if erros == 6:
+        print("\n")
+        print(f"Deu mole lagartixo, você perdeu o jogo. A palavra era {palavra.upper()}.")
+        break
